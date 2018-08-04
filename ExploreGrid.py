@@ -227,7 +227,7 @@ def comprobarExploreGrid():
         args = [False, "Absent", RandomPath(SIZE), randint(0, 1000), [], False]
         # print len(args)
         Players.append(player(*args))
-        print "Player" + str(Players[-1].name) "path: ", Players[-1].path
+        print "Player" + str(Players[-1].name) + "path: " + str(Players[-1].path)
 
     dyad = str(Players[0].name)[:3] + '-' + str(Players[1].name)[:3]
 
@@ -264,35 +264,36 @@ def comprobarExploreGrid():
     for pl in Players:
         # Plot visited locations
         print "Dibujando visited locations de la pareja " + str(dyad)
-        step = 0.25
+        step = float(1) / Num_Loc
         tangulos = []
         for j in range(Num_Loc * Num_Loc):
             x = int(j) % Num_Loc
             y = (int(j) - x) / Num_Loc
-        #    print "x: " + str(x)
-        #    print "y: " + str(y)
+            #    print "x: " + str(x)
+            #    print "y: " + str(y)
             by_x = x * step
             by_y = 1 - (y + 1) * step
-        #    print "by_x: " + str(by_x)
-        #    print "by_y: " + str(by_y)
-            if pl.path[j] == 0:
-                colores = "blue"
-            elif pl.path[j] == 1:
+            #    print "by_x: " + str(by_x)
+            #    print "by_y: " + str(by_y)
+            if paths[i][j] == 0:
+                colores = "white"
+            elif paths[i][j] == 1:
                 colores = "black"
-            elif pl.path[j] == 2:
+            elif paths[i][j] == 2:
                 colores = "red"
             else:
                 print "We have a problem: path player " + str(pl.Name) + " not right!"
+
+            # print "Color: ", colores
             tangulos.append(patches.Rectangle(*[(by_x, by_y), step, step], facecolor=colores))
 
         for t in tangulos:
             axes4[i].add_patch(t)
-        axes4[i].set_title('Player ' + str(Players[i].name))
+            axes4[i].set_title('Player ' + str(Players[i].name))
 
         i += 1
 
+    f.close()
+
     # fig4.show()
     plt.show()
-
-
-    f.close()

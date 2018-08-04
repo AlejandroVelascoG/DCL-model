@@ -1,3 +1,3 @@
 Dyad,Round,Player,Answer,Time,a11,a12,a13,a21,a22,a23,a31,a32,a33,b11,b12,b13,b21,b22,b23,b31,b32,b33,Score,Joint,Is_there,where_x,where_y
-786-111,9,786,Absent,2,0,0,1,0,0,0,0,0,1,0,0,2,0,0,0,0,0,1,2,2,Unicorn_Absent,-1,-1
-786-111,9,111,Absent,8,1,0,1,1,1,1,1,1,1,7,0,8,4,2,6,5,3,1,2,2,Unicorn_Absent,-1,-1
+603-574,2,603,Present,4,1,0,0,1,1,0,0,1,0,1,0,0,4,2,0,0,3,0,0,4,Unicorn_Present,2,0
+603-574,2,574,Present,7,1,1,1,1,1,0,1,1,0,6,2,7,4,5,0,3,1,0,0,4,Unicorn_Present,2,0
