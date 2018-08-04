@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 # import pandas as pd
 print "Ready!"
 
-Num_Loc = 8
-
 def weighted_choice(weights):
     '''
     Returns a number with probability determined by weights
@@ -31,11 +29,16 @@ def RandomPath(SIZE):
            SIZE must be a list of the frequencies/weight for each size
     Output: PATH which is a random path whose number of tiles depends on SIZE
     '''
-    grid = range(0, Num_Loc * Num_Loc)
+
+    Num_Rows = len(SIZE) ** 0.5
+    assert Num_Rows == int(Num_Rows), "Oops, problems with lenght of SIZE"
+    Num_Rows = int(Num_Rows)
+
+    grid = range(0, Num_Rows * Num_Rows)
     n = weighted_choice(SIZE)
     Casillas_a_visitar = sample(grid, n)
     path = []
-    for i in range(0, Num_Loc * Num_Loc):
+    for i in range(0, Num_Rows * Num_Rows):
         if i in Casillas_a_visitar:
             path.append(1)
         else:
