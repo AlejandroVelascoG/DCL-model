@@ -1,7 +1,7 @@
 print "loading packages..."
 import RandomPath as rp
 import ExploreGrid as eg
-
+import Analyze
 
 # ------------------------------------------
 # Functions
@@ -82,7 +82,10 @@ def find_min_distance_2_Focal(path):
 p = 0.5 # probability of there being a unicorn
 Pl = 2 # number of players
 Num_Loc = 8 # number of locations (squares in a row in the grid)
-
+SIZE = [1]*64
+numIter = 3
+Tolerance = 32
+Stubornness = 3
 # ------------------------------------------
 # Here begins the action
 # ------------------------------------------
@@ -105,6 +108,33 @@ for i in range(0, Num_Loc):
 		cols += 'b' + str(i+1) + str(j+1) + ','
 cols += 'Score,Joint,Is_there,where_x,where_y\n'
 f.write(cols)
+
+i = -1
+countB = 0
+rp.RandomPath(SIZE)
+for i in range(0,numIter):
+
+    if i < numIter:
+        camino = eg.ExploreGrid(p, Num_Loc, Players,f, numIter)
+        score = 30
+        if (find_min_distance_2_Focal(p))==0:
+            if (score < Tolerance):
+                countB += 1
+                if countB < Stubornness:
+                    i += 1 #???
+                else:
+                    rp.RandomPath(SIZE)
+            else:
+                i += 1 #???
+        else:
+            Path = rp.RandomPath(SIZE)
+            Minimo = find_min_distance_2_Focal(Path)
+            camino = rp.RandomPath(SIZE)
+            if Minimo == 0:
+                Player[0].path = camino
+                countB = 0
+    
+    
 
 
 
