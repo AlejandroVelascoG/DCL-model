@@ -20,8 +20,6 @@ def separateTiles(visitedTiles):
             soloTiles.append(0)
             jointTiles.append(0)
     return soloTiles, jointTiles
-            
-    #print "Aqui viene lo que esta haciendo Miguel"
 
 ##def analyze(visitedTiles, FocalPaths, Treshold, SIZE):
 ##    '''
@@ -36,4 +34,3 @@ def separateTiles(visitedTiles):
 ##
 ##
 ##    rp.RandomPath(SIZE)
-print separateTiles([0,1,2,2,0,1,1])

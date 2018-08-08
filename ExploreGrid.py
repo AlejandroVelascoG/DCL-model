@@ -11,13 +11,14 @@ import matplotlib.patches as patches
 class player(object):
 	'''Object defining a player. Has the following properties:
 		Ready; Decision; path; where; score'''
-	def __init__(self, Ready, Decision, path, Name, Where, Accuracy):
+	def __init__(self, Ready, Decision, path, Name, Where, Accuracy, Score):
 		self.ready = Ready # True or false
 		self.decision = Decision # "Present" or "Absent"
 		self.path = path # List of 0s and 1s
 		self.name = Name # Name of player
 		self.where = Where # Tiles actually visited
 		self.accuracy = Accuracy # True or False: Whether the player's decision is correct
+		self.score = Score # Player's score
 
 def ExploreGrid(probUnicorn, Num_Loc, Players, f, round):
     '''
@@ -29,13 +30,9 @@ def ExploreGrid(probUnicorn, Num_Loc, Players, f, round):
     f, opened file to write the development of the game
     round, number of the round being played
 
-    Output: paths, list of two lists with the tiles visited by players
-    Score, list of two scores
+    Output: paths, list of two lists with the tiles visited by Players
+    		Modifies .score, .where, . path from Players
     '''
-	# The variables that return the player's scores and joint thorughout the rounds
-	# Jugador0_score = []
-	# Jugador1_score = []
-	# Joints = []
 
     # Creates dyad name
     dyad = str(Players[0].name)[:3] + '-' + str(Players[1].name)[:3]
