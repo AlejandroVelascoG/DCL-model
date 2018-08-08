@@ -48,14 +48,14 @@ def find_min_distance_2_Focal(path, Num_Loc):
     '''
     Finds the minimum distance from a path to a focal path
 
-    Input: path is a list with path followed
+    Input: path is a list of tiles followed
 		   Num_Loc is the number of rows in the grid
 
     Output: minimum distance to a focal path,
-            closest focal path
+            list with tiles from closest focal path,
+			name of closest focal path
     '''
-
-    print "Finding distances to focal paths..."
+    # print "Finding distances to focal paths..."
 
     size = Num_Loc * Num_Loc
     half_size = Num_Loc * Num_Loc / 2
@@ -99,20 +99,29 @@ def find_min_distance_2_Focal(path, Num_Loc):
     # print "D_2_OUT: " + str(D_2_OUT)
 
     distances = {}
-
     distances[D_2_UP] = UP
     distances[D_2_DOWN] = DOWN
     distances[D_2_LEFT] = LEFT
     distances[D_2_RIGHT] = RIGHT
-    distances[D_2_ALL] = ALL
-    distances[D_2_NOTHING] = NOTHING
+    # distances[D_2_ALL] = ALL
+    # distances[D_2_NOTHING] = NOTHING
     distances[D_2_IN] = IN
     distances[D_2_OUT] = OUT
+
+	# nombres = {}
+    # nombres[D_2_UP] = 'UP'
+    # nombres[D_2_DOWN] = 'DOWN'
+    # nombres[D_2_LEFT] = 'LEFT'
+    # nombres[D_2_RIGHT] = 'RIGHT'
+    # # nombres[D_2_ALL] = 'ALL'
+    # # nombres[D_2_NOTHING] = 'NOTHING'
+    # nombres[D_2_IN] = 'IN'
+    # nombres[D_2_OUT] = 'OUT'
 
     minimo = min([\
                 D_2_UP, D_2_DOWN, \
                 D_2_LEFT, D_2_RIGHT, \
-                D_2_ALL, D_2_NOTHING, \
+                # D_2_ALL, D_2_NOTHING, \
                 D_2_IN, D_2_OUT, \
                 ])
 
@@ -151,15 +160,17 @@ def analyze(visitedTiles, Threshold, SIZE, Num_Loc):
 	distance, path = find_min_distance_2_Focal(soloTiles, Num_Loc)
 
 	if distance < Threshold:
+		print "soloTiles"
 		return path
 	else:
 		distance, path = find_min_distance_2_Focal(jointTiles, Num_Loc)
 		if distance < Threshold:
+			print "jointTiles"
 			return [1 - i for i in path]
 		else:
 			return RandomPath(SIZE)
 
-def ExploreGrid(probUnicorn, Num_Loc, Players, f, round):
+def ExploreGrid(probUnicorn, Num_Loc, Players, f, round, Exp):
     '''
     Explores the grid with both players and determines the score
 
@@ -168,6 +179,7 @@ def ExploreGrid(probUnicorn, Num_Loc, Players, f, round):
     Players, which is a list of players
     f, opened file to write the development of the game
     round, number of the round being played
+	Exp, identifier of experiment
 
     Output: paths, list of two lists with the tiles visited by Players
     		Modifies .score, .where, . path from Players
@@ -197,9 +209,9 @@ def ExploreGrid(probUnicorn, Num_Loc, Players, f, round):
     if x > probUnicorn:
         place = int(floor(uniform(0, Num_Loc * Num_Loc - 1)))
         Board[place] = 1
-        print "There is a unicorn at " + str(place)
-    else:
-        print "There is NO unicorn"
+        # print "There is a unicorn at " + str(place)
+    # else:
+    #     print "There is NO unicorn"
 
     # Finding maximum length of players' paths
     n = np.sum(Players[0].path)
@@ -215,17 +227,17 @@ def ExploreGrid(probUnicorn, Num_Loc, Players, f, round):
         region = [i for i, j in enumerate(pl.path) if j == 1]
         shuffle(region)
         Order.append(region)
-    print "Order[0]: ", Order[0]
-    print "Order[1]: ", Order[1]
+    # print "Order[0]: ", Order[0]
+    # print "Order[1]: ", Order[1]
 
     # Start searchging for the unicorn
     for j in range(max_length_paths):
-        print "\nRunning iteration " + str(j)
+        # print "\nRunning iteration " + str(j)
         for k in range(0, len(Players)):
             # See if other player said present. If so, do the same
             if Players[1 - k].decision == "Present":
                 Players[k].decision = "Present"
-                print "Player " + str(k) + " said Present"
+                # print "Player " + str(k) + " said Present"
                 Players[k].ready = True
                 break
                 # If the other player did not say Present, and
@@ -241,12 +253,12 @@ def ExploreGrid(probUnicorn, Num_Loc, Players, f, round):
                 if j < np.sum(Players[k].path):
                     search_place = Order[k][j] # Order[k] was defined before as the random order to follow Players[k].path
                     Players[k].where.append(search_place)
-                    print "Player " + str(k) + " is searching at " + str(search_place)
+                    # print "Player " + str(k) + " is searching at " + str(search_place)
                     if Board[search_place] == 1:
                         Players[k].decision = "Present"
-                        print "Player " + str(k) + " said Present"
+                        # print "Player " + str(k) + " said Present"
                         Players[k].ready = True
-                    else: print "Player " + str(k) + " found no unicorn"
+                    # else: print "Player " + str(k) + " found no unicorn"
             # Chechk if both players are ready. If so, stop search
             elif Players[1-k].ready == True:
                 break
@@ -255,8 +267,8 @@ def ExploreGrid(probUnicorn, Num_Loc, Players, f, round):
 
 	# Determine locations visited by both players
     a =  [x for x in Players[0].where if x in Players[1].where]
-    print "Both: ", a
-    print "len(both): ", len(a)
+    # print "Both: ", a
+    # print "len(both): ", len(a)
 
     # Determine the tiles visited by each player as a list of 0s and 1s
     # 0 means the player did not visited the tile
@@ -273,11 +285,12 @@ def ExploreGrid(probUnicorn, Num_Loc, Players, f, round):
             else:
                 Regions[k].append(0)
 
-    print "Regions[0]: ", Regions[0]
-    print "Regions[1]: ", Regions[1]
+    # print "Regions[0]: ", Regions[0]
+    # print "Regions[1]: ", Regions[1]
 
     # Determine individual scores
     for k in range(0, len(Players)):
+		f.write(str(Exp) + ",") # Exp
 		f.write(dyad + ",") # Dyad
 		f.write(str(round + 1) + ",") # Round
 
@@ -286,31 +299,31 @@ def ExploreGrid(probUnicorn, Num_Loc, Players, f, round):
 		if place == -1:
 			# print "There was NO unicorn"
 			if Players[k].decision == "Absent":
-				print "Player " + str(k) + "\'s answer is Correct!"
+				# print "Player " + str(k) + "\'s answer is Correct!"
 				Players[k].accuracy = True
 				Players[k].score = Num_Loc*Num_Loc/2 - len(a)
-				print "Player " + str(k) + "\'s score this round is: " + \
-					str(Players[k].score)
+				# print "Player " + str(k) + "\'s score this round is: " + \
+				# 	str(Players[k].score)
 			else:
-				print "Player " + str(k) + "\'s answer is Incorrect!"
+				# print "Player " + str(k) + "\'s answer is Incorrect!"
 				Players[k].accuracy = False
 				Players[k].score = -Num_Loc*Num_Loc - len(a)
-				print "Player " + str(k) + "\'s score this round is: " + \
-					str(Players[k].score)
+				# print "Player " + str(k) + "\'s score this round is: " + \
+				# 	str(Players[k].score)
 		else:
 			# print "There was a unicorn"
 			if Players[k].decision == "Present":
-				print "Player " + str(k) + "\'s answer is Correct!"
+				# print "Player " + str(k) + "\'s answer is Correct!"
 				Players[k].accuracy = True
 				Players[k].score = Num_Loc*Num_Loc/2 - len(a)
-				print "Player " + str(k) + "\'s score this round is: " + \
-					str(Players[k].score)
+				# print "Player " + str(k) + "\'s score this round is: " + \
+				# 	str(Players[k].score)
 			else:
-				print "Player " + str(k) + "\'s answer is Incorrect!"
+				# print "Player " + str(k) + "\'s answer is Incorrect!"
 				Players[k].accuracy = False
 				Players[k].score = -Num_Loc*Num_Loc - len(a)
-				print "Player " + str(k) + "\'s score this round is: " + \
-					str(Players[k].score)
+				# print "Player " + str(k) + "\'s score this round is: " + \
+				# 	str(Players[k].score)
 		f.write(str(Players[k].name) + ",") # Player
 		f.write(Players[k].decision + ",") # Answer
 		f.write(str(len(Players[k].where)) + ",") # Time
@@ -503,3 +516,255 @@ def comprobarRandomPath(SIZE, n):
     # plt.xlabel("Size")
     # plt.ylabel("Frequency")
     plt.show()
+
+def experimento(Pl, SIZE, Num_Loc, numIter, p,\
+				Tolerance, Stubornness, Threshold, Exp, f):
+
+    # Creates the players
+    Players = []
+    for k in range(0, Pl):
+    	Players.append(player(\
+                                 False,\
+                                 "",\
+                                 RandomPath(SIZE),\
+                                 str(uniform(0, 10000000))[:3], \
+                                 [],\
+                                 False, \
+                                 0\
+                                 )\
+                        )
+
+    countB = 0 # Initializes couter for Stubornness
+
+    for i in range(numIter):
+
+        print "Running iteration " + str(i)
+        regions = ExploreGrid(p, Num_Loc, Players,f, i, Exp)
+
+        for k in range(len(Players)):
+
+            Minimo, camino = find_min_distance_2_Focal(Players[k].path, Num_Loc)
+
+            if Minimo == 0:
+                print "Player " + str(Players[k].name) + " is following a focal path"
+                if (Players[k].score < Tolerance):
+                    countB += 1
+                    if countB > Stubornness:
+                        Players[k].path = RandomPath(SIZE)
+                        print "Player " + str(Players[k].name) + " follows a focal path no more!"
+
+            else:
+                print "Player " + str(Players[k].name) + " is NOT following a focal path"
+                Path = analyze(regions[k], Threshold, SIZE, Num_Loc)
+                Minimo, camino = find_min_distance_2_Focal(Path, Num_Loc)
+                if Minimo == 0:
+                    print "Player " + str(Players[k].name) + " will follow a focal path!"
+                    Players[k].path = camino
+                    countB = 0
+
+def get_measures():
+	print "loading pandas..."
+	import pandas as pd
+
+	# Opens the file with data from DCL experiment into a Pandas DataFrame
+	print "Reading data..."
+
+	data_archivo = 'raw_sim.csv'
+
+	data = pd.read_csv(data_archivo, index_col=False)
+	print "Data read!"
+
+	# --------------------------------------------------
+	# Parameters
+	# --------------------------------------------------
+	Num_Loc = 8
+
+	# --------------------------------------------------
+	# Obtaining measures from players' performance
+	# --------------------------------------------------
+	# Find the accumulated score
+	print "Finding accumulated score..."
+	data['Ac_Score'] = data.sort_values(['Dyad','Player']).groupby('Player')['Score'].cumsum()
+	# print data
+
+	# --------------------------------------------------
+	# Working only with trials with "Unicorn_Absent"
+	# --------------------------------------------------
+	data = pd.DataFrame(data.groupby('Is_there').get_group('Unicorn_Absent')).reset_index()
+	# data = pd.DataFrame(data.groupby('Is_there').get_group('Unicorn_Absent'))
+
+
+	# --------------------------------------------------
+	# Continue obtaining measures
+	# --------------------------------------------------
+	Dyads = data.Dyad.unique()
+
+	# Find the normalized score
+	max_score = 32
+	min_score = -64 - 64
+	print "Finding normalized score..."
+	data['Norm_Score'] = (data['Score'] - min_score) / (max_score - min_score)
+	# print data
+
+	# Find the number of tiles visited per round per player
+	cols = ['a' + str(i+1) + str(j+1) for i in range(0, Num_Loc) for j in range(0, Num_Loc)]
+	data['Size_visited'] = data[cols].sum(axis=1)
+	# print data[:10]
+	cols2 = ['a' + str(i + 1) + str(j + 1) for i in range(0, Num_Loc) for j in range(0, Num_Loc)]
+	dts = []
+	cols22 = ['Inters-' + c for c in cols2]
+	# print data[cols22]
+	cols222 = ['Unions-' + c for c in cols2]
+	# print data[cols222]
+	for key, grp in data[cols2 + ['Player']].groupby(['Player']):
+		# print "Processing player: ", key
+		aux1 = pd.DataFrame(np.floor(grp[cols2].rolling(2).mean()))
+		aux2 = pd.DataFrame(np.ceil(grp[cols2].rolling(2).mean()))
+		AAAA = pd.concat([aux1, aux2], axis=1)
+		AAAA.columns = cols22 + cols222
+		AAAA['Inters'] = AAAA[cols22].sum(axis=1)
+		AAAA['Unions'] = AAAA[cols222].sum(axis=1)
+		AAAA['Consistency'] = AAAA['Inters']/AAAA['Unions']
+		# print AAAA['Consistency']
+		dts.append(AAAA['Consistency'])
+
+	# rerer = pd.merge(dts[0], dts[1], left_index=True, right_index=True, how='outer')
+	rerer = pd.concat(dts, axis=1)
+	# print rerer.columns.values
+	columnas = []
+	nombres = list(rerer.columns.values)
+	# print nombres
+	for i in range(len(nombres)):
+		columnas.append(str(i))
+	# print columnas
+	rerer.columns = columnas
+	# print rerer.columns.values
+	# print rerer.shape
+	rerer['Consistency'] = rerer['0']
+	for i in range(1, len(nombres)):
+		rerer['Consistency'] = rerer['Consistency'].combine_first(rerer[str(i)])
+
+	data['Consistency'] = rerer['Consistency']
+	data['Consistency'] = data['Consistency'].fillna(1)
+	# data['Consistency'] = data['Consistency'].fillna(0)
+	# print data
+
+
+	# Find distance between players' strategies ----
+	print "Finding distance between players' strategies..."
+	# Find the squares visited by both players ----
+	cols = ['Dyad','Player','Size_visited', 'Consistency']
+	cols += ['a' + str(i+1) + str(j+1) for i in range(0, Num_Loc) for j in range(0, Num_Loc)]
+	Grps_Dyad = data[cols].groupby(['Dyad'])
+	total = []
+	dli = []
+	dif_cons = []
+	for d in Dyads:
+		grp = Grps_Dyad.get_group(d)
+		Players = grp.Player.unique()
+		# print "The players in dyad " + str(d) + " are: " + str(Players)
+		Grp_player = grp.groupby(['Player'])
+		aux1 = pd.DataFrame(Grp_player.get_group(Players[0])).reset_index()
+		aux2 = pd.DataFrame(Grp_player.get_group(Players[1])).reset_index()
+		# print aux1['a11']
+		# print aux2['a11']
+		# a = [np.where(aux1['a' + str(i + 1) + str(j + 1)] + aux2['a' + str(i + 1) + str(j + 1)] >= 1, 1, 0) for i in range(0, Num_Loc) for j in range(0, Num_Loc)]
+		a = [np.where(aux1['a' + str(i + 1) + str(j + 1)] + aux2['a' + str(i + 1) + str(j + 1)] >= 1, 1, 0) for i in range(0, Num_Loc) for j in range(0, Num_Loc)]
+		aux3 = sum(a)
+		# Finding difference between consistencies
+		# print "La consistencia de uno es " + str(aux1['Consistency'])
+		# print "La consistencia de otro es " + str(aux2['Consistency'])
+		aux4 = np.absolute(aux1['Consistency'] - aux2['Consistency'])
+		# print "La dif consistencia es " + str(aux4)
+		# print "El total de locaciones visitas por los dos jugadores en" + \
+		"la pareja " + str(d) + " es: " + str(aux3)
+		for j in aux3:
+			# print "j: " + str(j) + " comp. dist.: " + str(1-float(j)/Num_Loc)
+			total.append(j)
+			total.append(j)
+			# preparing to add dif_cons
+		for j in aux4:
+			dif_cons.append(j)
+			dif_cons.append(j)
+
+	# print str(len(data)) + " " + str(len(total))
+	data['Total_visited_dyad'] = total
+	# #print data[:3]
+	data['Dif_consist'] = dif_cons
+	# print data['Dif_consist'][:3]
+
+	# Division of labor Index (Goldstone)
+	data['DLIndex'] = (data['Total_visited_dyad'] - data['Joint'])/(Num_Loc*Num_Loc)
+	data['DLIndex_Mean'] = data['DLIndex'].groupby(data['Dyad']).transform('mean')
+
+
+	# Find fairness between players' split of the grid ----
+	print "Finding fairness..."
+	# Find the squares visited by both players ----
+	cols = ['Dyad','Player','Size_visited']
+	Grps_Dyad = data[cols].groupby(['Dyad'])
+	Dyads = data.Dyad.unique()
+	data['Fairness'] = np.nan
+	print "Data primeros 3\n", data[:3]
+	for d in Dyads:
+		grp = Grps_Dyad.get_group(d)
+		Players = grp.Player.unique()
+		# print "The players in dyad " + str(d) + " are: " + str(Players)
+		Grp_player = grp.groupby(['Player'])
+		aux1 = pd.DataFrame(Grp_player['Size_visited'].get_group(Players[0]))
+		aux2 = pd.DataFrame(Grp_player['Size_visited'].get_group(Players[1]))
+		# print "Here we find the fairness"
+		aux1['Size_visited'] = aux1.Size_visited.astype(float)
+		# print "aux1\n", aux1['Size_visited'][:3]
+		# print "aux2\n", aux2['Size_visited'][:3]
+		se = pd.Series(list(aux2['Size_visited'])) # capturo los valores del otro jugador
+		aux1['Fairness'] = 1 - np.absolute(aux1['Size_visited'] - se.values)/(Num_Loc * Num_Loc)
+		# print "aux1\n", aux1
+		se = pd.Series(list(aux1['Fairness'])) # duplico los valores de fairnes del primer jugador
+		aux2['Fairness'] = se.values # y se los pego al segundo
+		# print "aux2\n", aux2
+		fairness = pd.concat([aux1, aux2], axis=1)
+		columnas = ['a', 'f1', 'b', 'f2']
+		fairness.columns = columnas
+		# print "fairness primeros 3\n", fairness[:3]
+		fairness['f1'] = fairness['f1'].combine_first(fairness['f2'])
+		# print "fairness primeros 3\n", fairness[:3]
+		# print "fairness 60 a 63", fairness[60:63]
+		# print fairness.shape
+		data['Fairness'] = data['Fairness'].combine_first(fairness['f1'])
+		# print "Data\n", data['Fairness']
+
+	# --------------------------------------------------
+	# Finding distance per round, per player
+	# --------------------------------------------------
+	print "Finding distances to focal paths..."
+
+	# Deterimining list of columns
+	cols1 = ['a' + str(i) + str(j) \
+	        for i in range(1, Num_Loc + 1) \
+	        for j in range(1, Num_Loc + 1) \
+	        ]
+	cols = cols1 + ['Player', 'Round']
+
+	print "Sorting by Player, Round..."
+	data = data.sort_values(['Player', 'Round'], \
+	                ascending=[True, True]).reset_index()
+
+	distancias = []
+	for player, Grp in data[cols].groupby(['Player']):
+	    print "Working with player " + str(player) + "..."
+	    for ronda, grp in Grp.groupby(['Round']):
+	        # print "Obtaining path from round " + str(ronda) + "..."
+	        path = [int(list(grp[c])[0]) for c in cols1]
+	        # print path
+	        # print "Finding minimum distance to a focal path..."
+	        minimo, camino = find_min_distance_2_Focal(path, Num_Loc)
+	        # print "Min: " + str(minimo)
+	        distancias.append(minimo)
+
+	data['Distancias'] = distancias
+
+	data.to_csv('sim_dat.csv', index=False)
+	print "Results saved to sim_dat.csv"
+
+	print "Done!"

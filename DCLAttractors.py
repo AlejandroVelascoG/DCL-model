@@ -14,33 +14,24 @@ p = 0.5 # probability of there being a unicorn
 Pl = 2 # number of players
 Num_Loc = 8 # number of locations (squares in a row in the grid)
 SIZE = [1]*64
-numIter = 60
-Tolerance = 30
-Stubornness = 3
-Threshold = 0.1
+numIter = 20
+Tolerance_Global = [30, 30, 30, 30]
+Stubornness_Global = [3, 3, 3, 3]
+# Threshold_Global = [0.5, 0.55, 0.60, 0.65]
+Threshold_Global = [0.65, 0.7, 0.75, 0.8]
+Exp_Global = Threshold_Global
+
+rotulo = "Threshold behavior"
+
 # ------------------------------------------
 # Here begins the action
 # ------------------------------------------
-
-# Creates the players
-Players = []
-for k in range(0, Pl):
-	Players.append(fp.player(\
-                             False,\
-                             "",\
-                             fp.RandomPath(SIZE),\
-                             int(uniform(0, 1000)), \
-                             [],\
-                             False, \
-                             0\
-                             )\
-                    )
 
 # Open files to save data
 f = open("raw_sim.csv", 'w')
 
 # Initialize files with headers
-cols = 'Dyad,Round,Player,Answer,Time,'
+cols = 'Exp,Dyad,Round,Player,Answer,Time,'
 for i in range(0, Num_Loc):
 	for j in range(0, Num_Loc):
 		cols += 'a' + str(i+1) + str(j+1) + ','
@@ -50,27 +41,25 @@ for i in range(0, Num_Loc):
 cols += 'Score,Joint,Is_there,where_x,where_y\n'
 f.write(cols)
 
-countB = 0 # Initializes couter for Stubornness
 
-for i in range(numIter):
+n = len(Exp_Global)
 
-    regions = fp.ExploreGrid(p, Num_Loc, Players,f, i)
+for i in range(n):
+    print "Corriendo con parametro " + rotulo + " = " + str(Exp_Global[i])
 
-    for k in range(len(Players)):
-
-        Minimo, camino = fp.find_min_distance_2_Focal(Players[k].path, Num_Loc)
-
-        if Minimo == 0:
-            if (Players[k].score < Tolerance):
-                countB += 1
-                if countB > Stubornness:
-                    Players[k].path = fp.RandomPath(SIZE)
-
-        else:
-            Path = fp.analyze(regions[k], Threshold, SIZE, Num_Loc)
-            Minimo, camino = fp.find_min_distance_2_Focal(Path, Num_Loc)
-            if Minimo == 0:
-                Players[k].path = camino
-                countB = 0
+    for j in range(45):
+        fp.experimento(Pl, \
+                       SIZE, \
+                       Num_Loc, \
+                       numIter, \
+                       p, \
+                       Tolerance_Global[i], \
+                       Stubornness_Global[i], \
+                       Threshold_Global[i], \
+                       Exp_Global[i], \
+                       f)
 
 f.close()
+print "Experiment done!"
+
+# fp.get_measures()
