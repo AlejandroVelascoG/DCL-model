@@ -1,7 +1,7 @@
 print "loading packages..."
 import RandomPath as rp
 import ExploreGrid as eg
-import Analyze
+import Analyze as al
 
 # ------------------------------------------
 # Functions
@@ -9,10 +9,6 @@ import Analyze
 def set_distance(l1, l2):
     # Finds the distance between lists l1 and l2
     # Lists l1 and l2 must contain only 0 and 1
-    # print "Finding distance between "
-    # print l1
-    # print "and"
-    # print l2
 
     intersect = np.sum([np.where(l1[i] + l2[i] > 1, 1, 0) for i in range(0, Num_Loc * Num_Loc)])
     # print "Intersection: " + str(intersect)
@@ -24,6 +20,13 @@ def set_distance(l1, l2):
         return 1 - (float(intersect)/uni)
 
 def find_min_distance_2_Focal(path):
+    '''
+    Finds the minimum distance from a path to a focal path
+
+    Input: path
+    Output: minimum distance to a focal path,
+            closest focal path
+    '''
 
     print "Finding distances to focal paths..."
 
@@ -67,13 +70,26 @@ def find_min_distance_2_Focal(path):
     # print "D_2_NOTHING: " + str(D_2_NOTHING)
     # print "D_2_IN: " + str(D_2_IN)
     # print "D_2_OUT: " + str(D_2_OUT)
+
+    distances = {}
+
+    distances[D_2_UP] = UP
+    distances[D_2_DOWN] = DOWN
+    distances[D_2_LEFT] = LEFT
+    distances[D_2_RIGHT] = RIGHT
+    distances[D_2_ALL] = ALL
+    distances[D_2_NOTHING] = NOTHING
+    distances[D_2_IN] = IN
+    distances[D_2_OUT] = OUT
+
     minimo = min([\
                 D_2_UP, D_2_DOWN, \
                 D_2_LEFT, D_2_RIGHT, \
                 D_2_ALL, D_2_NOTHING, \
                 D_2_IN, D_2_OUT, \
                 ])
-    return minimo
+
+    return minimo, distances[minimo]
 
 # ------------------------------------------
 # Parameters
@@ -83,17 +99,27 @@ p = 0.5 # probability of there being a unicorn
 Pl = 2 # number of players
 Num_Loc = 8 # number of locations (squares in a row in the grid)
 SIZE = [1]*64
-numIter = 3
+numIter = 1
 Tolerance = 32
 Stubornness = 3
 # ------------------------------------------
 # Here begins the action
 # ------------------------------------------
-Creates the players
-Requires import ExploreGrid as eg
+
+# Creates the players
 Players = []
 for k in range(0, Pl):
-	Players.append(eg.player(False, "", [], [], 0, False, int(uniform(0, 1000000))))
+	Players.append(eg.player(\
+                             False,\
+                             "",\
+                             rp.RandomPath(SIZE),\
+                             [],\
+                             0, \
+                             False, \
+                             int(uniform(0, 1000000)), \
+                             0\
+                             )\
+                    )
 
 # Open files to save data
 f = open("raw_sim.csv", 'w')
@@ -109,34 +135,25 @@ for i in range(0, Num_Loc):
 cols += 'Score,Joint,Is_there,where_x,where_y\n'
 f.write(cols)
 
-i = -1
-countB = 0
-rp.RandomPath(SIZE)
-for i in range(0,numIter):
+countB = 0 # Initializes couter for Stubornness
 
-    if i < numIter:
-        camino = eg.ExploreGrid(p, Num_Loc, Players,f, numIter)
-        score = 30
-        if (find_min_distance_2_Focal(p))==0:
-            if (score < Tolerance):
+for i in range(numIter):
+
+    for k in range(len(Players)):
+
+        regions = eg.ExploreGrid(p, Num_Loc, Players,f, numIter)
+
+        if find_min_distance_2_Focal(Players[k].path) == 0:
+            if (Players[k].score < Tolerance):
                 countB += 1
-                if countB < Stubornness:
-                    i += 1 #???
-                else:
-                    rp.RandomPath(SIZE)
-            else:
-                i += 1 #???
+                if countB > Stubornness:
+                    Players[k].path = rp.RandomPath(SIZE)
+
         else:
-            Path = rp.RandomPath(SIZE)
-            Minimo = find_min_distance_2_Focal(Path)
-            camino = rp.RandomPath(SIZE)
+            Path = al.Analize(regions[k])
+            Minimo, camino = find_min_distance_2_Focal(Path)
             if Minimo == 0:
-                Player[0].path = camino
+                Players[k].path = camino
                 countB = 0
-    
-    
 
-
-
-
-# f.close()
+f.close()
