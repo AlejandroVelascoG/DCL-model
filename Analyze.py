@@ -21,16 +21,16 @@ def separateTiles(visitedTiles):
             jointTiles.append(0)
     return soloTiles, jointTiles
 
-##def analyze(visitedTiles, FocalPaths, Treshold, SIZE):
-##    '''
-##
-##    '''
-##
-##    soloTiles, jointTiles = separateTiles(visitedTiles)
-##
-##    d = closest(soloTiles)
-##
-##    if d < Treshold:
-##
-##
-##    rp.RandomPath(SIZE)
+def analyze(visitedTiles, FocalPaths, Treshold, SIZE):
+
+    soloTiles, jointTiles = separateTiles(visitedTiles)
+    distance, path = find_min_distance_2_Focal(soloTiles)
+
+    if distance < Treshold:
+        return path
+    else:
+        distance, path = find_min_distance_2_Focal(jointTiles)
+        if distance < Treshold:
+            return [1 - i for i in path]
+            else:
+                rp.RandomPath(SIZE)
